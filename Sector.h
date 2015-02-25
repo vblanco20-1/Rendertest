@@ -1,23 +1,23 @@
 #pragma once
 #include <vector>
-#include "Vector.h"
-
+#include "glm.hpp"
+using namespace glm;
 struct Segment
 {
-	Vector2d A;
-	Vector2d B;
-	Vector2d Normal;
+	vec2 A;
+	vec2 B;
+	vec2 Normal;
 	
 };
 
 class Sector
 {
 public:
-	Sector(std::vector<Vector2d>&Points );
+	Sector(std::vector<vec2>&Points);
 	~Sector();
 
 
-private:
+
 	std::vector<Segment> Walls;
 
 

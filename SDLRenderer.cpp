@@ -1,8 +1,9 @@
 #include "SDLRenderer.h"
+#include <math.h>
 
-
-
-
+#include "glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/rotate_vector.hpp"
 SDLRenderer::SDLRenderer(SDLFramebuffer * framebuffer) : Framebuffer{framebuffer}
 {
 	
@@ -13,8 +14,9 @@ SDLRenderer::~SDLRenderer()
 {
 }
 
-void SDLRenderer::DrawLine(const Vector2d& A, const Vector2d& B, SDL_Color color)
+void SDLRenderer::DrawLine(const glm::ivec2& A, const glm::ivec2& B, SDL_Color color)
 {
+	
 	const Uint32 * Pixels = Framebuffer->GetPixelArray();
 
 
@@ -50,14 +52,38 @@ void SDLRenderer::DrawColumn(unsigned int x, float height, SDL_Color color)
 	}
 }
 
-void SDLRenderer::DrawWallLocal(Vector2d& A, Vector2d& B, SDL_Color color)
+void SDLRenderer::DrawWall(vec2& A, vec2& B, vec2& viewPos, vec2& viewDir)
 {
-	A.Clamp(0,1);
+	vec3 ChangedA = vec3(A, 0) - vec3(viewPos, 0);
+	vec3 ChangedB = vec3(B, 0) - vec3(viewPos, 0);
+	//A = A - viewPos;
+	//B = B - viewPos;
 
-	B.Clamp(0,1);
+	//glm::mat4 Projection = glm::perspective(35.0f, 1.0f, 0.1f, 100.0f);
 
-	Vector2d Left, Right;
-	if (A.X < B.X)
+	
+
+
+	vec3 finalA = glm::rotateZ(ChangedA, viewDir.x);
+	vec3 finalB = glm::rotateZ(ChangedB, viewDir.x);
+
+	
+	SDL_Color green{ 0, 255, 0, 255 };
+
+
+	finalA.y /= 10;
+	finalB.y /= 10;
+	DrawWallLocal(vec2(finalA), vec2(finalB), green);
+}
+
+
+
+void SDLRenderer::DrawWallLocal(vec2& A, vec2& B, SDL_Color color)
+{
+	
+
+	vec2 Left, Right;
+	if (A.x < B.x)
 	{
 		Left = A;
 		Right = B;
@@ -68,9 +94,20 @@ void SDLRenderer::DrawWallLocal(Vector2d& A, Vector2d& B, SDL_Color color)
 		Right = A;
 	}
 
-	const int startx = Left.X * Framebuffer->GetWidth();
-	const int endx = Right.X * Framebuffer->GetWidth();
+	int FrameWidth = Framebuffer->GetWidth();
 
+	int startx = Left.x * FrameWidth;
+	int endx = Right.x* FrameWidth;
+
+	if (startx < 0)
+	{
+		startx = 0;
+	}
+
+	if (endx > FrameWidth)
+	{
+		endx = FrameWidth;
+	}
 	for (int x = startx; x < endx; x++)
 	{
 		//lerp value
@@ -78,7 +115,18 @@ void SDLRenderer::DrawWallLocal(Vector2d& A, Vector2d& B, SDL_Color color)
 		float dif = (x - startx);
 		float l =  dif/dist ;
 
-		float y = (1 - l)*Left.Y + l*Right.Y;
+		float y = (1 - l)*Left.y + l*Right.y;
 		DrawColumn(x, y, color);
+	}
+}
+
+
+
+void SDLRenderer::DrawSector(const Sector& sector)
+{
+	for (auto wall : sector.Walls)
+	{
+		SDL_Color green{ 0, 255, 0, 255 };
+		DrawWallLocal(wall.A, wall.B, green);
 	}
 }

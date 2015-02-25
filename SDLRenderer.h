@@ -1,7 +1,9 @@
 #pragma once
 #include "SDLFramebuffer.h"
-#include "Vector.h"
 
+#include "Sector.h"
+#include "glm.hpp"
+using namespace glm;
 class SDLRenderer
 {
 public:
@@ -9,13 +11,19 @@ public:
 	~SDLRenderer();
 
 
-	void DrawLine(const Vector2d& A, const Vector2d& B, SDL_Color color);
+	
 
 	
+	void DrawLine(const glm::ivec2& A, const glm::ivec2& B, SDL_Color color);
 	void DrawColumn(unsigned int x, float height, SDL_Color color);
 
 	//draw a wall on local transformed coordinates(vectors will be clamped)
-	void DrawWallLocal(Vector2d& A, Vector2d& B, SDL_Color color);
+	void DrawWallLocal(vec2& A, vec2& B, SDL_Color color);
+
+	//draw a wall on those global points, it will get transformed
+	void DrawWall(vec2& A, vec2& B, vec2& viewPos, vec2& viewDir);
+
+	void DrawSector(const Sector& sector);
 private:
 
 	SDLFramebuffer * Framebuffer;
