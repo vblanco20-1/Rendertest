@@ -29,11 +29,14 @@ int main(int argc, char **argv){
 				break;
 			}
 		}
-		
-		for (int x = 40; x < 300; x++)
-		{
-			renderer.DrawColumn(x, x / 300.f, red);
-		}
+		Vector2d B(0.2,0.7);
+		Vector2d A(1,0.1);
+
+		renderer.DrawWallLocal(A, B,red);
+		//for (int x = 40; x < 300; x++)
+		//{
+		//	renderer.DrawColumn(x, x / 300.f, red);
+		//}
 		System.DrawFrame(&Framebuffer);
 	}
 	return 0;

@@ -11,7 +11,8 @@ struct Vector2d
 
 	inline void operator+(Vector2d&A);
 	inline void operator-(Vector2d&A);
+	
 
+	Vector2d Clamp(float min, float max);
 };
-
 

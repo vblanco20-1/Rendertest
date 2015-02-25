@@ -56,7 +56,7 @@ Uint32 * SDLFramebuffer::GetPixelArray()
 
 void SDLFramebuffer::ClearPixels()
 {
-	for (int i = 0; i < Width * Height; i++)
+	for (unsigned int i = 0; i < Width * Height; i++)
 	{
 		PixelArray[i] = 0;
 	}

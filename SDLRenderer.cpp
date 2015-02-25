@@ -49,3 +49,36 @@ void SDLRenderer::DrawColumn(unsigned int x, float height, SDL_Color color)
 
 	}
 }
+
+void SDLRenderer::DrawWallLocal(Vector2d& A, Vector2d& B, SDL_Color color)
+{
+	A.Clamp(0,1);
+
+	B.Clamp(0,1);
+
+	Vector2d Left, Right;
+	if (A.X < B.X)
+	{
+		Left = A;
+		Right = B;
+	}
+	else
+	{
+		Left = B;
+		Right = A;
+	}
+
+	const int startx = Left.X * Framebuffer->GetWidth();
+	const int endx = Right.X * Framebuffer->GetWidth();
+
+	for (int x = startx; x < endx; x++)
+	{
+		//lerp value
+		float dist = (endx - startx);
+		float dif = (x - startx);
+		float l =  dif/dist ;
+
+		float y = (1 - l)*Left.Y + l*Right.Y;
+		DrawColumn(x, y, color);
+	}
+}
